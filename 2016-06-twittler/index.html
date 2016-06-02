@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="jquery.js"></script>
+    <script src="data_generator.js"></script>
+    <link rel="stylesheet" type="text/css" href="main.css">
+  </head>
+  <body>
+    <header>
+      <h1 class="logo">twittler</h1>
+      <h2 class="now viewing">viewing: your stream</h2>
+    </header>
+    <nav class="">
+      <button class='submit' type="button">New tweets</button>
+    </nav>
+    <div class="content">
+      <div class="col-2-3">
+      </div><aside class="col-1-3">
+      </aside>
+    </div>
+    <footer class="foot">
+    Made with <strong>&hearts;</strong> by Jessica Chiou for Hack Reactor
+    </footer>
+    
+    <script>
+
+      $(document).ready(function(){
+        var $content = $('.content');
+        var $col23 = $('.col-2-3');
+        var $col13 = $('.col-1-3');
+        var count = 0;
+
+        var index = streams.home.length - 1;
+        
+        while(index >= 0){
+          var tweet = streams.home[index];
+          var timeStamp = streams.home[index].created_at.toString();
+          var $tweet = $('<p class="tweet"></p>');
+          var $user = $('<a href="#" class="username"></a>');
+          $user.attr('data-user', tweet.user);
+          $user.text('@' + tweet.user);
+          $user.prependTo($tweet);
+
+          $tweet.append(': ' + tweet.message);
+          $tweet.appendTo($col23);
+          $('<p class="time">' + timeStamp.slice(0,21) + '</p>').appendTo($col13);
+          count += 1;
+          index --;
+        }
+        
+        
+        // Show the user new tweets somehow. (You can show them automatically as they're created, or create a button that displays new tweets.) 
+
+        // Button for loading new tweets.
+
+        $('.submit').on('click', function(){
+          
+          $('h2').empty();
+          $('h2').text('viewing: your stream');
+          $('.clear').remove();
+          $('.content').css('height','500px');
+          index = streams.home.length - 1
+          while (count < index) {
+            var tweet = streams.home[index];
+            var timeStamp = streams.home[index].created_at.toString();
+            var $tweet = $('<p class="tweet"></p>');
+            var $user = $('<a href="#" class="username"></a>');
+            $user.attr('data-user', tweet.user);
+            $user.text('@' + tweet.user);
+            $user.prependTo($tweet);
+
+            $tweet.append(': ' + tweet.message);
+            $tweet.prependTo($col23);
+            $('<p class="time">' + timeStamp.slice(0,21) + '</p>').prependTo($col13);
+            count++;
+            index--;
+          }
+        })
+
+
+        // function for grabbing user's tweets -- only works for original 11 tweets for some reason 
+        var userTweets = function(user) {
+          var index = streams.users[user].length - 1;
+          while (index >= 0) {
+            var tweet = streams.users[user][index];
+            var $tweet = $('<p class="tweet clear"></p>');
+            var $user = $('<a href="#" class="username clear"></a>');
+            var timeStamp = tweet.created_at.toString();
+
+
+            $user.attr('data-user', tweet.user);
+            $user.text('@' + tweet.user);
+            $user.prependTo($tweet);
+
+            $tweet.append(': ' + tweet.message);
+            $tweet.appendTo($col23);
+            $('<p class="time clear">' + timeStamp.slice(0,21) + '</p>').appendTo($col13);
+            index--;
+          }
+        }
+
+        $('.content').on('click', 'a', function () {
+          
+          $col23.empty();
+          $col13.empty();
+
+          userTweets($(this).data('user'));
+          $('h2').text('viewing: @' + $(this).data('user'));
+        });
+      
+
+
+      });
+
+    </script>
+  </body>
+</html>
